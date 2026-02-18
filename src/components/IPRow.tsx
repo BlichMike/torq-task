@@ -12,7 +12,7 @@ export interface IPRowProps {
   clockTick: number
 }
 
-export const IPRow: React.FC<IPRowProps> = ({ rowIndex, clockTick: _clockTick }) => {
+export const IPRow: React.FC<IPRowProps> = ({ rowIndex }) => {
   const [ipInput, setIpInput] = useState<string>('')
   const [validationError, setValidationError] = useState<string | null>(null)
   const [shouldGetData, setShouldGetData] = useState(false)
