@@ -1,13 +1,20 @@
 name: CI/CD Pipeline
-on: [push]
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  test-and-deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -16,16 +23,20 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Tests
-        # If this fails, the next step (Deploy) will never run!
-        run: npm test -- --watchAll=false 
-
-      - name: Run Linting
+      - name: Lint Code
         run: npm run lint
 
-      # Only runs if tests passed
+      - name: Typecheck and Build
+        # This catches TS errors that might not show up in dev mode
+        run: npm run build
+
+      - name: Run Tests
+        # Using your specific script from package.json
+        run: npm run test:run
+
       - name: Deploy to Vercel
-        if: github.ref == 'refs/heads/main'
+        # Only deploy if the push is to the main branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
