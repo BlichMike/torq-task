@@ -2,7 +2,7 @@ import type { IPData } from '@/types/ipData'
 import { ERROR_MESSAGES } from '@/consts'
 
 class IPService {
-  private readonly baseUrl = 'http://ipwhois.app/json'
+  private readonly baseUrl = `http${import.meta.env.VITE_NODE_ENV === 'production' ? 's' : ''}://ipwhois.app/json`
 
   public async getIPData(ip: string): Promise<IPData> {
     let response: Response
